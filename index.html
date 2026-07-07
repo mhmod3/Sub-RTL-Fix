@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>مُصلح الترجمة - دعم الكتابة من اليمين إلى اليسار</title>
   <style>
+   
     @font-face {
       font-family: 'Adobe Arabic';
       src: url('https://raw.githubusercontent.com/mhmod3/Sub-RTL-Fix/refs/heads/main/22016-adobearabic.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
     }
+
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Adobe Arabic', 'Segoe UI', system-ui, sans-serif;
@@ -66,9 +68,9 @@
       font-size: clamp(1.1rem, 1.6vw, 1.4rem);
     }
     .drop span { font-weight: 600; color: #fff; }
+
     .file-info {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       background: #252525;
       padding: 0.8rem 1.2rem;
@@ -79,24 +81,7 @@
     }
     .file-info .name { font-weight: 500; color: #f0f0f0; }
     .file-info .size { color: #999; }
-    .file-list {
-      width: 100%;
-      margin-top: 0.5rem;
-      border-top: 1px solid #333;
-      padding-top: 0.5rem;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-    .file-list-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.2rem 0;
-      font-size: 0.9rem;
-      color: #ccc;
-      border-bottom: 1px solid #2a2a2a;
-    }
-    .file-list-item .fname { color: #e0e0e0; }
-    .file-list-item .fsize { color: #888; }
+
     .actions {
       display: flex;
       justify-content: center;
@@ -124,13 +109,16 @@
     .actions button.primary:hover { background: #2a4a6a; }
     .actions button.primary:disabled { opacity: 0.5; pointer-events: none; }
     .actions button.secondary:hover { background: #3a3a3a; }
+    .actions button.danger { color: #f88; }
+    .actions button.danger:hover { background: #3a1a1a; }
+
     .output-wrap { display: none; margin-top: 1.5rem; border-top: 1px solid #333; padding-top: 1.5rem; }
     .output-wrap textarea {
       width: 100%;
       height: 260px;
       border: 1px solid #444;
       padding: 1rem;
-      font-family: 'Adobe Arabic', 'Courier New', monospace;
+      font-family: 'Adobe Arabic', 'Courier New', monospace; /* استخدام الخط مع احتفاظ بخصائص أحادية المسافة */
       font-size: clamp(1rem, 1.4vw, 1.2rem);
       background: #1e1e1e;
       color: #e0e0e0;
@@ -166,6 +154,7 @@
     }
     .out-actions button.green:hover { background: #1a6a4a; }
     .out-actions button.gray:hover { background: #3a3a3a; }
+
     .status {
       margin-top: 1rem;
       font-size: clamp(1rem, 1.3vw, 1.15rem);
@@ -181,29 +170,28 @@
   <h1>مُصلح اتجاه النص</h1>
   <div class="sub">
     <span>أداة لضبط اتجاه النصوص في ملفات الترجمة</span>
-    <span class="format-hint">يدعم صيغ SRT، VTT، ASS فقط</span>
+    <span class="format-hint">يدعم صيغ SRT، VTT، ASS</span>
   </div>
 
   <div class="drop" id="dropZone">
-    <input type="file" id="fileInput" accept=".srt,.vtt,.ass" multiple>
-    <label for="fileInput"><span>اختر ملفاً</span> أو اسحب عدة ملفات إلى هنا</label>
+    <input type="file" id="fileInput" accept=".srt,.vtt,.ass,.txt">
+    <label for="fileInput"><span>اختر ملفاً</span> أو اسحبه إلى هنا</label>
   </div>
 
   <div class="file-info" id="fileInfo" style="display:none;">
     <span class="name" id="fileName">لا يوجد ملف</span>
     <span class="size" id="fileSize">0 ك.ب</span>
-    <div class="file-list" id="fileList"></div>
   </div>
 
   <div class="actions">
-    <button class="primary" id="processBtn" disabled>معالجة وإصلاح الكل</button>
+    <button class="primary" id="processBtn" disabled>معالجة وإصلاح</button>
     <button class="secondary" id="clearBtn">تفريغ</button>
   </div>
 
   <div class="output-wrap" id="outputWrap">
     <textarea id="outputText" readonly></textarea>
     <div class="out-actions">
-      <button class="green" id="downloadBtn">تحميل الناتج المُدمج</button>
+      <button class="green" id="downloadBtn">تحميل الملف المُصلح</button>
       <button class="gray" id="copyBtn">نسخ النص</button>
     </div>
     <div id="statusMessage" class="status"></div>
@@ -211,9 +199,7 @@
 </div>
 
 <script>
-// ============================================================
-//  إضافة دوال String.prototype
-// ============================================================
+
 if (!String.prototype.clearFormatting) {
   Object.assign(String.prototype, {
     clearFormatting: function() {
@@ -228,9 +214,7 @@ if (!String.prototype.clearFormatting) {
   });
 }
 
-// ============================================================
-//  دوال استخراج وإعادة العلامات (HTML, {..})
-// ============================================================
+
 function extractTags(text) {
   const tags = [];
   const stripped = text.replace(/<[^>]*>|\\{[^}]*\\}/g, function(match) {
@@ -246,9 +230,7 @@ function restoreTags(text, tags) {
   });
 }
 
-// ============================================================
-//  تطبيق RTL على النص مع الحفاظ على العلامات
-// ============================================================
+
 function fixTextWithRTL(text) {
   if (!text) return text;
   const { stripped, tags } = extractTags(text);
@@ -259,9 +241,7 @@ function fixTextWithRTL(text) {
   return restoreTags(fixed, tags);
 }
 
-// ============================================================
-//  معالجة الملفات حسب الصيغة
-// ============================================================
+
 function detectFormat(content) {
   if (/^\[Script Info\]/im.test(content) || /^Dialogue:/im.test(content)) return 'ass';
   if (/^WEBVTT/i.test(content.trim())) return 'vtt';
@@ -334,9 +314,7 @@ function fixSubtitleFile(content) {
   }
 }
 
-// ============================================================
-//  اكتشاف الترميز التلقائي
-// ============================================================
+
 function scoreText(text) {
   let score = 0;
   const total = text.length;
@@ -382,26 +360,17 @@ function decodeAuto(buffer) {
   return { text: decoded, encoding: 'UTF-8 (fallback)' };
 }
 
-// ============================================================
-//  التحقق من صيغة الملف (الامتداد)
-// ============================================================
-function isValidFormat(fileName) {
-  const ext = fileName.split('.').pop().toLowerCase();
-  return ['srt', 'vtt', 'ass'].includes(ext);
-}
 
-// ============================================================
-//  واجهة المستخدم – دعم متعدد الملفات
-// ============================================================
-let fileDataMap = new Map(); // اسم الملف -> { buffer, decodedText, fixedText }
-let processedAll = false;
+let currentFileData = null;
+let currentFileName = '';
+let currentFileSize = 0;
+let currentDecodedText = '';
 
 const fileInput = document.getElementById('fileInput');
 const dropZone = document.getElementById('dropZone');
 const fileInfo = document.getElementById('fileInfo');
 const fileName = document.getElementById('fileName');
 const fileSize = document.getElementById('fileSize');
-const fileList = document.getElementById('fileList');
 const processBtn = document.getElementById('processBtn');
 const clearBtn = document.getElementById('clearBtn');
 const outputWrap = document.getElementById('outputWrap');
@@ -410,123 +379,35 @@ const downloadBtn = document.getElementById('downloadBtn');
 const copyBtn = document.getElementById('copyBtn');
 const statusMsg = document.getElementById('statusMessage');
 
-function formatFileSize(bytes) {
-  if (bytes < 1024) return bytes + ' ب';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' ك.ب';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' م.ب';
-}
-
-function updateFileInfo(files) {
-  if (!files || files.length === 0) {
-    fileInfo.style.display = 'none';
-    return;
-  }
-  fileInfo.style.display = 'flex';
-  const totalSize = Array.from(files).reduce((sum, f) => sum + f.size, 0);
-  fileName.textContent = files.length + ' ملف';
-  fileSize.textContent = formatFileSize(totalSize);
-  // قائمة الملفات
-  fileList.innerHTML = '';
-  files.forEach(f => {
-    const div = document.createElement('div');
-    div.className = 'file-list-item';
-    div.innerHTML = `<span class="fname">${f.name}</span><span class="fsize">${formatFileSize(f.size)}</span>`;
-    fileList.appendChild(div);
-  });
-}
-
-function loadFiles(fileList) {
-  const validFiles = Array.from(fileList).filter(f => isValidFormat(f.name));
-  const invalid = Array.from(fileList).filter(f => !isValidFormat(f.name));
-  if (invalid.length > 0) {
-    statusMsg.textContent = `تم تجاهل ${invalid.length} ملف(ات) غير صالحة (يُسمح فقط بـ .srt, .vtt, .ass)`;
-    statusMsg.className = 'status error';
-  } else {
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentFileData = e.target.result;
+    currentFileName = file.name;
+    currentFileSize = file.size;
+    fileName.textContent = file.name;
+    fileSize.textContent = (file.size / 1024).toFixed(1) + ' ك.ب';
+    fileInfo.style.display = 'flex';
     statusMsg.textContent = '';
     statusMsg.className = 'status';
-  }
-  if (validFiles.length === 0) {
-    processBtn.disabled = true;
-    fileDataMap.clear();
-    fileInfo.style.display = 'none';
     outputWrap.style.display = 'none';
-    return;
-  }
-  // قراءة كل ملف
-  let loadedCount = 0;
-  fileDataMap.clear();
-  validFiles.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const buffer = e.target.result;
-      const result = decodeAuto(buffer);
-      fileDataMap.set(file.name, {
-        buffer: buffer,
-        decodedText: result.text,
-        encoding: result.encoding,
-        fixedText: null
-      });
-      loadedCount++;
-      if (loadedCount === validFiles.length) {
-        // كل الملفات جاهزة
-        processBtn.disabled = false;
-        updateFileInfo(validFiles);
-        // عرض معاينة لأول ملف
-        const first = validFiles[0];
-        const data = fileDataMap.get(first.name);
-        outputText.value = data.decodedText.slice(0, 500) + (data.decodedText.length > 500 ? '\n... (معاينة)' : '');
-        outputWrap.style.display = 'block';
-        statusMsg.textContent = `تم تحميل ${validFiles.length} ملف(ات). اضغط "معالجة وإصلاح الكل".`;
-        statusMsg.className = 'status';
-        processedAll = false;
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  });
+    processBtn.disabled = false;
+    autoDecodeAndPreview();
+  };
+  reader.readAsArrayBuffer(file);
 }
 
-// معالجة جميع الملفات
-function processAllFiles() {
-  if (fileDataMap.size === 0) {
-    statusMsg.textContent = 'لا توجد ملفات صالحة للمعالجة.';
-    statusMsg.className = 'status error';
-    return;
-  }
-  let resultText = '';
-  let successCount = 0;
-  for (let [name, data] of fileDataMap) {
-    try {
-      const fixed = fixSubtitleFile(data.decodedText);
-      data.fixedText = fixed;
-      successCount++;
-      resultText += `========== ${name} ==========\n${fixed}\n\n`;
-    } catch (err) {
-      resultText += `========== ${name} (خطأ) ==========\n${err.message}\n\n`;
-    }
-  }
-  outputText.value = resultText;
+function autoDecodeAndPreview() {
+  if (!currentFileData) return;
+  const result = decodeAuto(currentFileData);
+  currentDecodedText = result.text;
+  statusMsg.textContent = 'تم فك الترميز بنجاح باستخدام ' + result.encoding;
+  statusMsg.className = 'status';
+  const preview = result.text.slice(0, 500) + (result.text.length > 500 ? '\n... (معاينة)' : '');
+  outputText.value = preview;
   outputWrap.style.display = 'block';
-  processedAll = true;
-  statusMsg.textContent = `تمت معالجة ${successCount} ملف(ات) بنجاح.`;
-  statusMsg.className = 'status success';
 }
 
-// تحميل الناتج المدمج
-function downloadMerged() {
-  const content = outputText.value;
-  if (!content) return;
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'merged_fixed_subtitles.txt';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-// أحداث
 dropZone.addEventListener('dragover', e => {
   e.preventDefault();
   dropZone.style.background = '#2e2e2e';
@@ -539,18 +420,55 @@ dropZone.addEventListener('drop', e => {
   dropZone.style.background = '#252525';
   if (e.dataTransfer.files.length > 0) {
     fileInput.files = e.dataTransfer.files;
-    loadFiles(e.dataTransfer.files);
+    loadFile(e.dataTransfer.files[0]);
   }
 });
 fileInput.addEventListener('change', () => {
-  if (fileInput.files.length > 0) {
-    loadFiles(fileInput.files);
+  if (fileInput.files.length > 0) loadFile(fileInput.files[0]);
+});
+
+processBtn.addEventListener('click', function() {
+  if (!currentFileData) {
+    statusMsg.textContent = 'الرجاء تحميل ملف أولاً.';
+    statusMsg.className = 'status error';
+    return;
+  }
+  const textToFix = currentDecodedText;
+  if (!textToFix) {
+    statusMsg.textContent = 'لا يوجد نص مفكوك، حاول إعادة التحميل.';
+    statusMsg.className = 'status error';
+    return;
+  }
+  try {
+    const fixed = fixSubtitleFile(textToFix);
+    outputText.value = fixed;
+    outputWrap.style.display = 'block';
+    statusMsg.textContent = 'تمت المعالجة بنجاح. النصوص الآن متوافقة مع الكتابة من اليمين إلى اليسار.';
+    statusMsg.className = 'status success';
+    window._fixedContent = fixed;
+    window._originalName = currentFileName;
+  } catch(err) {
+    statusMsg.textContent = 'حدث خطأ أثناء المعالجة: ' + err.message;
+    statusMsg.className = 'status error';
+    outputWrap.style.display = 'none';
   }
 });
 
-processBtn.addEventListener('click', processAllFiles);
-
-downloadBtn.addEventListener('click', downloadMerged);
+downloadBtn.addEventListener('click', function() {
+  const content = outputText.value;
+  if (!content) return;
+  const baseName = currentFileName.replace(/\.[^.]+$/, '') + '_مصلح';
+  const ext = currentFileName.includes('.') ? '.' + currentFileName.split('.').pop() : '.srt';
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = baseName + ext;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
 
 copyBtn.addEventListener('click', function() {
   const text = outputText.value;
@@ -568,14 +486,16 @@ copyBtn.addEventListener('click', function() {
 
 clearBtn.addEventListener('click', function() {
   fileInput.value = '';
-  fileDataMap.clear();
+  currentFileData = null;
+  currentFileName = '';
+  currentFileSize = 0;
+  currentDecodedText = '';
   fileInfo.style.display = 'none';
   outputWrap.style.display = 'none';
   statusMsg.textContent = '';
   statusMsg.className = 'status';
   processBtn.disabled = true;
   outputText.value = '';
-  processedAll = false;
 });
 
 processBtn.disabled = true;
