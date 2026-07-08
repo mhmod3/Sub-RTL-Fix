@@ -300,7 +300,8 @@
 if (!String.prototype.clearFormatting) {
   Object.assign(String.prototype, {
     clearFormatting: function() {
-      return this.replace(/[\u202A\u202B\u202C\u202D\u202E\u200E\u200F]/g, '');
+      // إزالة جميع أحكام الاتجاه وأحرف التحكم (FF, CR, TAB, NBSP)
+      return this.replace(/[\u202A\u202B\u202C\u202D\u202E\u200E\u200F\u200C\u200D\u000C\u000D\u0009\u00A0]/g, '');
     },
     toRTL: function() {
       return '\u202B' + this + '\u202C';
@@ -342,10 +343,20 @@ function detectFormat(content) {
   return 'srt';
 }
 
+// ============================================================
+//  معالجة SRT و VTT مع فلتر إزالة الأسطر الوهمية
+// ============================================================
 function processSRT(content) {
   const blocks = content.split(/\n\s*\n/);
   const processed = blocks.map(block => {
-    const lines = block.split('\n').filter(line => line.trim() !== '');
+    let lines = block.split('\n');
+    // تصفية الأسطر التي تتكون فقط من أحكام اتجاه أو أحرف تحكم
+    lines = lines.filter(line => {
+      if (line.length === 0) return true; // سطر فارغ حقيقي
+      const cleaned = line.clearFormatting().trim();
+      if (cleaned === '') return false; // سطر وهمي
+      return true;
+    });
     if (lines.length < 3) return block;
     const number = lines[0];
     const time = lines[1];
@@ -374,6 +385,9 @@ function processVTT(content) {
   return header + '\n' + fixedBody;
 }
 
+// ============================================================
+//  معالجة ASS – بدون أي فلتر للأسطر، فقط تعديل النص داخل الحقول
+// ============================================================
 function processASS(content) {
   const lines = content.split('\n');
   const processed = lines.map(line => {
@@ -394,6 +408,7 @@ function processASS(content) {
         return 'Title: ' + fixed;
       }
     }
+    // نعيد باقي الأسطر كما هي دون تغيير (بما فيها الأسطر الفارغة)
     return line;
   });
   return processed.join('\n');
@@ -656,15 +671,13 @@ function processSingleFile(index) {
 }
 
 // ============================================================
-//  دالة التحميل المُصححة (بدون إضافة .txt)
+//  دالة التحميل
 // ============================================================
 function downloadFile(index) {
   const item = fileItems[index];
   if (!item || item.status !== 'done' || !item.fixedText) return;
 
-  // استخراج الامتداد الأصلي
   const originalExt = item.name.includes('.') ? item.name.split('.').pop().toLowerCase() : 'srt';
-  // دعم الامتدادات الشائعة
   const mimeTypes = {
     'srt': 'text/plain',
     'vtt': 'text/vtt',
@@ -672,7 +685,6 @@ function downloadFile(index) {
   };
   const mimeType = mimeTypes[originalExt] || 'application/octet-stream';
 
-  // اسم الملف الجديد: الاسم الأصلي بدون الامتداد + "_مصلح" + الامتداد الأصلي
   const baseName = item.name.replace(/\.[^.]+$/, '');
   const newName = baseName + '_مصلح.' + originalExt;
 
