@@ -15,6 +15,7 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Adobe Arabic', 'Segoe UI', system-ui, sans-serif;
+      font-weight: bold; /* جعل الخط عريضاً في كل الموقع */
       background: #1e1e1e;
       color: #d0d0d0;
       padding: 1.5rem 0.75rem;
@@ -34,7 +35,7 @@
     }
     h1 {
       font-size: clamp(1.8rem, 4vw, 2.6rem);
-      font-weight: 500;
+      font-weight: 700; /* أكثر وضوحاً مع bold */
       margin-bottom: 0.3rem;
       text-align: center;
       color: #dcdcdc;
@@ -60,7 +61,7 @@
     .sub .warning-note {
       display: block;
       color: #cc4444;
-      font-weight: normal;
+      font-weight: bold; /* جعل التحذير عريضاً أيضاً */
       font-size: clamp(0.85rem, 1.1vw, 1rem);
       margin-top: 0.3rem;
       /* لا خلفية ولا إيموجي ولا حدود */
@@ -85,7 +86,7 @@
       font-size: clamp(1rem, 1.4vw, 1.2rem);
       direction: rtl;
     }
-    .drop span { font-weight: 500; color: #e0e0e0; }
+    .drop span { font-weight: 700; color: #e0e0e0; } /* جعل "اختر ملفاً" أكثر وضوحاً */
 
     .file-list {
       background: #222;
@@ -122,6 +123,7 @@
       background: #333;
       color: #999;
       text-align: center;
+      font-weight: bold; /* جعل حالة الملف عريضة */
     }
     .file-item .status.ready { background: #2a3a4a; color: #8aacd0; }
     .file-item .status.done { background: #1a3a2a; color: #7aaa8a; }
@@ -143,6 +145,7 @@
       cursor: pointer;
       border-radius: 4px;
       font-family: inherit;
+      font-weight: bold; /* جعل نصوص الأزرار عريضة */
       transition: background 0.15s;
       white-space: nowrap;
       direction: rtl;
@@ -190,7 +193,7 @@
     #previewArea .preview-header .title {
       font-size: clamp(0.9rem, 1.1vw, 1rem);
       color: #b0b0b0;
-      font-weight: 400;
+      font-weight: bold;
       direction: rtl;
     }
     #previewArea .preview-header .close-preview {
@@ -202,6 +205,7 @@
       cursor: pointer;
       font-size: clamp(0.75rem, 0.9vw, 0.9rem);
       font-family: inherit;
+      font-weight: bold;
       direction: rtl;
     }
     #previewArea .preview-header .close-preview:hover { background: #2a2a2a; }
@@ -211,6 +215,7 @@
       padding: 0.5rem;
       font-family: 'Adobe Arabic', 'Courier New', monospace;
       font-size: clamp(0.85rem, 1.1vw, 1rem);
+      font-weight: bold; /* جعل النص في المعاينة عريضاً */
       background: #141414;
       color: #d0d0d0;
       border: 1px solid #2a2a2a;
@@ -236,7 +241,7 @@
       padding: 0.5rem 1.6rem;
       font-size: clamp(0.9rem, 1.2vw, 1.05rem);
       cursor: pointer;
-      font-weight: 400;
+      font-weight: bold;
       transition: background 0.15s;
       border-radius: 6px;
       font-family: inherit;
@@ -257,6 +262,7 @@
       color: #999;
       text-align: center;
       direction: rtl;
+      font-weight: bold;
     }
     .status-msg.error { color: #c08080; }
     .status-msg.success { color: #80b080; }
