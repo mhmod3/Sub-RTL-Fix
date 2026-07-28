@@ -22,7 +22,7 @@
       justify-content: center;
       min-height: 100vh;
       line-height: 1.8;
-      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      font-size: clamp(1rem, 1.4vw, 1.3rem);
       direction: rtl;
       unicode-bidi: embed;
     }
@@ -33,7 +33,7 @@
       unicode-bidi: embed;
     }
     h1 {
-      font-size: clamp(1.8rem, 3.8vw, 2.5rem);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
       font-weight: 500;
       margin-bottom: 0.3rem;
       text-align: center;
@@ -43,7 +43,7 @@
     }
     .sub {
       color: #999;
-      font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+      font-size: clamp(0.9rem, 1.2vw, 1.1rem);
       border-bottom: 1px solid #333;
       padding-bottom: 0.9rem;
       margin-bottom: 1.5rem;
@@ -56,6 +56,14 @@
       font-size: clamp(0.8rem, 1vw, 0.95rem);
       color: #777;
       margin-top: 0.2rem;
+    }
+    .sub .warning-note {
+      display: block;
+      color: #cc4444;
+      font-weight: normal;
+      font-size: clamp(0.85rem, 1.1vw, 1rem);
+      margin-top: 0.3rem;
+      /* لا خلفية ولا إيموجي ولا حدود */
     }
     .drop {
       border: 2px dashed #444;
@@ -199,7 +207,7 @@
     #previewArea .preview-header .close-preview:hover { background: #2a2a2a; }
     #previewArea textarea {
       width: 100%;
-      height: 200px;
+      height: clamp(150px, 30vh, 300px);
       padding: 0.5rem;
       font-family: 'Adobe Arabic', 'Courier New', monospace;
       font-size: clamp(0.85rem, 1.1vw, 1rem);
@@ -258,7 +266,12 @@
       .file-item .name { flex: 1; text-align: right; }
       .file-item .actions { justify-content: flex-start; }
       .global-actions button { padding: 0.4rem 1rem; }
-      #previewArea textarea { height: 140px; }
+      #previewArea textarea { height: clamp(120px, 25vh, 200px); }
+      body { padding: 1rem 0.5rem; }
+    }
+    @media (min-width: 1200px) {
+      .main { max-width: 960px; }
+      body { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -268,6 +281,7 @@
   <div class="sub">
     <span>أداة لضبط اتجاه النصوص في ملفات الترجمة</span>
     <span class="format-hint">يدعم الصيغ: SRT، VTT، ASS – إمكانية معالجة عدة ملفات</span>
+    <span class="warning-note">لا تضف ملفات تدعم RTL بالفعل.</span>
   </div>
 
   <div class="drop" id="dropZone">
